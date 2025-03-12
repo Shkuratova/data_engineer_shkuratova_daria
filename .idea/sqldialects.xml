@@ -3,6 +3,5 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/Task2-3/docker/database/ddl.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Task4/request.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/truncate.sql" dialect="PostgreSQL" />
   </component>
 </project>

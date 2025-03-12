@@ -36,7 +36,7 @@ create table logs(
     message_guid uuid,
     response_status_code int not null ,
     log_message varchar(1024),
-    event_guid uuid
+    event_guid uuid not null
 
 ) partition by range (log_date);
 

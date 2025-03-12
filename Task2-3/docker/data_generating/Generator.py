@@ -1,7 +1,7 @@
 import random
 import uuid
 from datetime import timedelta
-from random import randint, choices, sample, choice, randrange
+from random import randint, choices, sample, choice
 from faker import Faker
 
 Faker.seed(42)
@@ -16,7 +16,7 @@ ENTRY_TOPIC_LOG = 'LOG: Topic {} viewed'
 DELETE_TOPIC_LOG = 'LOG: Topic {} was deleted'
 WRITE_MESSAGE_LOG = 'LOG: Message {} was send'
 
-REGISTRATION_ERROR = 'ERROR: Еmail already in use'
+REGISTRATION_ERROR = 'ERROR: Email already in use'
 CREATE_TOPIC_ERROR = 'ERROR: Only authorized users can create topics'
 LOGIN_ERROR = 'ERROR: Wrong login or password'
 SERVER_ERROR = 'ERROR: Server Error'
@@ -87,7 +87,6 @@ class Generator:
         self.topic_cnt = 0
         self.msg_cnt = 0
 
-
     def random_date(self, log_date):
         end = self.start + timedelta(hours=23, minutes=59)
         start = self.start if self.start >= log_date else log_date
@@ -134,10 +133,11 @@ class Generator:
 
     def login(self):
         n = randint(5, max(10, self.user_cnt))
-
         self.gen_logs(n, 'login')
+
         errors = randint(2, n - 1)
         success = n - errors
+
         self.server_response += [0] * errors + [1] * success
         self.log_message += choices([LOGIN_ERROR, SERVER_ERROR], k=errors, weights=[1, 1])
         self.user_guid += [None] * errors
@@ -175,8 +175,8 @@ class Generator:
         self.server_response += [0] * errors + [1] * success
         self.log_message += [CREATE_TOPIC_ERROR] * errors
         self.user_guid += [None] * errors
-        self.message_guid += [None] * n
         self.topic_guid += [None] * errors
+        self.message_guid += [None] * n
 
         user_ref = choices(range(self.user_cnt), k=success)
         self.log_date += [self.random_date(self.user_joined[i]) for i in user_ref]
@@ -191,14 +191,15 @@ class Generator:
         n = len(self.topics) if len(self.topics) <= 5 else randint(5, len(self.topics))
         self.gen_logs(n, 'entry topic')
 
-        self.server_response += [1] * n
-        anonymous = randint(0, n - 1)
-        self.user_guid += [None] * anonymous + choices(self.users, k=(n - anonymous))
+        anon = randint(0, n - 1)
+
+        self.user_guid += [None] * anon + choices(self.users, k=(n - anon))
         topic_ref = choices(list(self.topics.keys()), k=n)
         self.log_date += [self.random_date(self.topics[i].date_created) for i in topic_ref]
         self.topic_guid += topic_ref
         self.log_message += [ENTRY_TOPIC_LOG.format(i) for i in topic_ref]
 
+        self.server_response += [1] * n
         self.message_guid += [None] * n
 
     def delete_topic(self):
@@ -208,11 +209,11 @@ class Generator:
         errors = n if self.topic_cnt <= n else randint(2, 4)
         success = n - errors
 
-        topic_ref = choices(list(self.topics.keys()), k=errors)
+        topic_ref = choices(list(self.topics.keys()), k=n)
         self.topic_guid += topic_ref
         self.user_guid += [self.topics[i].user_guid for i in topic_ref]
         self.server_response += [0] * errors
-        self.log_message += [SERVER_ERROR for i in topic_ref]
+        self.log_message += [SERVER_ERROR] * errors
         self.log_date += [self.random_date(self.topics[i].date_created) for i in topic_ref]
         self.message_guid += [None] * n
 
@@ -237,13 +238,12 @@ class Generator:
 
     def write_message(self):
         n = randint(5, 500)
+        self.gen_logs(n, 'write message')
 
         auth = choices([0, 1], k=n, weights=[1, 1])
         self.msg_cnt += n
 
-        self.gen_logs(n, 'write message')
         self.server_response += [1] * n
-
         user_ref = [choice(self.users) if i else None for i in auth]
         topic_ref = choices(list(self.topics.keys()), k=n)
         msg_ref = [uuid.uuid4() for _ in range(n)]

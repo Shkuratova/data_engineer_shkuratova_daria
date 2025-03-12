@@ -53,7 +53,8 @@ for i, j in enumerate(g.messages.items()):
 # Logs
 for i in range(g.log_cnt):
     cursor.execute(
-        "INSERT INTO logs (guid, log_date, user_guid, response_status_code, log_message, event_guid, topic_guid, message_guid)"
+        "INSERT INTO logs (guid, log_date, user_guid, response_status_code, "
+        "log_message, event_guid, topic_guid, message_guid)"
         "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (
             g.log_guid[i], g.log_date[i], g.user_guid[i], g.server_response[i],
             g.log_message[i], g.log_event_guid[i], g.topic_guid[i], g.message_guid[i]

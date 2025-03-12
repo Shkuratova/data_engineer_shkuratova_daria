@@ -2,7 +2,7 @@ with log_by_date as (
 select log_date, user_guid, event_name
 from logs
 inner join log_event lg on lg.guid = logs.event_guid
-where log_date between '2025-02-01' and '2025-03-11' and
+where log_date between '2025-02-01' and '2025-03-12' and
       response_status_code = 1
 ),
 new_accounts as (

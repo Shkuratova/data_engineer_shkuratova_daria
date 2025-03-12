@@ -3,6 +3,11 @@ import psycopg2
 # start_date  = '2025-02-10'
 # end_date  = '2025-03-11'
 
+host = 'localhost'
+port = '5432'
+user = 'admin'
+database_name = 'logsdb'
+password = 'admin'
 
 start_date  = input('start date (YYYY-MM-DD):')
 end_date  = input('end date (YYYY-MM-DD):')
@@ -58,11 +63,11 @@ inner join message_count mc on mc.log_date = ps.log_date
 '''
 
 conn = psycopg2.connect(
-    host="localhost",
-    port="5422",
-    dbname="logsdb",
-    user="admin",
-    password="admin"
+    host=host,
+    port=port,
+    dbname=database_name,
+    user=user,
+    password=password
 )
 cur = conn.cursor()
 
